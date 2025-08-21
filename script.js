@@ -7,31 +7,28 @@ const pokemonDisplay = document.getElementById('pokemon-display');
 const galleryContainer = document.getElementById('gallery-container');
 const paginationButtons = document.getElementById('pagination-buttons');
 
-// Variáveis para controlar a paginação
 let offset = 0;
 const limit = 24; // Quantos Pokémon carregar por página
 // script.js (na seção 1)
 
-// ===================================================================
+
 // 1. VARIÁVEIS E ESTADO GLOBAL
-// ===================================================================
+
 const themeToggleButton = document.getElementById('theme-toggle-button');
-// ... (o resto das suas variáveis)
 
+//LÓGICA DO TEMA NOTURNO 
 
-// ===== LÓGICA DO TEMA NOTURNO =====
-
-// Verifica se o usuário já tem uma preferência salva
+// verifica se o usuário já tem uma preferência salva
 if (localStorage.getItem('theme') === 'dark') {
     document.body.classList.add('dark-mode');
     themeToggleButton.innerText = '☀️ Modo Claro';
 }
 
 themeToggleButton.addEventListener('click', () => {
-    // Adiciona ou remove a classe do body
+    // adiciona ou remove a classe do body
     document.body.classList.toggle('dark-mode');
 
-    // Salva a preferência do usuário no localStorage
+    // salva a preferência do usuário no localStorage
     if (document.body.classList.contains('dark-mode')) {
         localStorage.setItem('theme', 'dark');
         themeToggleButton.innerText = '☀️ Modo Claro';
@@ -41,14 +38,8 @@ themeToggleButton.addEventListener('click', () => {
     }
 });
 
-// ===================================================================
 // 2. LÓGICA DA ANIMAÇÃO E PAGINAÇÃO DA GALERIA
-// ===================================================================
 
-/**
- * Orquestra a mudança de página com animação.
- * @param {string} direction - 'next' ou 'previous'.
- */
 const changePage = (direction) => {
     const slideOutClass = direction === 'next' ? 'slide-out-left' : 'slide-out-right';
     const slideInClass = direction === 'next' ? 'slide-in-right' : 'slide-in-left';
@@ -76,7 +67,7 @@ const changePage = (direction) => {
 };
 
 /**
- * Busca os Pokémon na ordem numérica correta (por ID) e os exibe na galeria.
+ *busca os Pokémon na ordem numérica correta (por ID) e os exibe na galeria.
  */
 const fetchAndDisplayPokemons = async () => {
     try {
@@ -85,8 +76,8 @@ const fetchAndDisplayPokemons = async () => {
         
         for (let i = 0; i < limit; i++) {
             const pokemonId = startId + i;
-            // O número total de Pokémon pode mudar, então paramos se o ID for maior que o conhecido.
-            // Ajuste este número conforme novas gerações forem lançadas.
+            // o número total de Pokémon pode mudar, então paramos se o ID for maior que o conhecido.
+            // ajuste este número conforme novas gerações forem lançadas.
             const totalKnownPokemons = 1025; 
             if (pokemonId > totalKnownPokemons) break;
             requests.push(fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`).then(res => res.json()));
@@ -94,10 +85,10 @@ const fetchAndDisplayPokemons = async () => {
 
         const pokemonData = await Promise.all(requests);
 
-        galleryContainer.innerHTML = ''; // Garante que a galeria esteja limpa
+        galleryContainer.innerHTML = ''; // garante que a galeria esteja limpa
         pokemonData.forEach(pokemon => createGalleryCardFromFullData(pokemon));
 
-        updatePaginationButtons(1025); // Usamos um valor fixo para o total
+        updatePaginationButtons(1025); // usamos um valor fixo para o total
 
     } catch (error) {
         galleryContainer.innerHTML = '<p class="error-text">Não foi possível carregar a galeria.</p>';
@@ -106,7 +97,7 @@ const fetchAndDisplayPokemons = async () => {
 };
 
 /**
- * Cria um card individual para a galeria a partir dos dados completos do Pokémon.
+ * cria um card individual para a galeria a partir dos dados completos do Pokémon.
  * @param {object} pokemonDetails - O objeto completo de dados do Pokémon.
  */
 const createGalleryCardFromFullData = (pokemonDetails) => {
@@ -127,7 +118,7 @@ const createGalleryCardFromFullData = (pokemonDetails) => {
 };
 
 /**
- * Cria e atualiza os botões "Anterior" e "Próxima".
+ * cria e atualiza os botões "Anterior" e "Próxima".
  * @param {number} totalPokemons - O número total de Pokémon existentes.
  */
 const updatePaginationButtons = (totalPokemons) => {
@@ -150,9 +141,7 @@ const updatePaginationButtons = (totalPokemons) => {
 };
 
 
-// ===================================================================
 // 3. LÓGICA DA BUSCA E EXIBIÇÃO PRINCIPAL
-// ===================================================================
 
 searchForm.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -232,12 +221,10 @@ const displayPokemon = (pokemonData, speciesData) => {
 };
 
 
-// ===================================================================
 // 4. INICIALIZAÇÃO DA APLICAÇÃO
-// ===================================================================
 
-// Carrega o Pokémon em destaque inicial
+// carrega o Pokémon em destaque inicial
 fetchPokemonData('1');
 
-// Carrega a primeira página da galeria
+// carrega a primeira página da galeria
 fetchAndDisplayPokemons();
